@@ -50,6 +50,18 @@
 				App = {},
 				Bundle = {},
 				Components = [];
+
+			Components.push("./component/card.htm");
+
+			function buildApp () {
+				new Vue({
+					el: "#KeySpotApp"
+				});
+			}
+
+			jQuery(document).ready(function () {
+				CORE.loadComponents(Components, buildApp);
+			});
 		} ());
 	</script>
 </body>
