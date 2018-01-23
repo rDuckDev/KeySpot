@@ -1,4 +1,4 @@
-<template>
+<template id="CardTemplate">
 	<transition
 		enter-active-class="animated fadeIn"
 		leave-active-class="animated fadeOut">
@@ -21,7 +21,7 @@
 		"use strict";
 
 		Vue.component("spot-card", {
-			template: CORE.getTemplateHTML(),
+			template: CORE.getTemplateHTML("#CardTemplate"),
 			props: [ "spot" ],
 			computed: { hasCode: function () { return this.spot.uCode.length; } }
 		});
