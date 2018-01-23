@@ -4,19 +4,26 @@
 		leave-active-class="animated fadeOut">
 		<div class="card">
 			<div class="card-header">
-				<button class="close">&times;</button>
-				<h4 class="m-0">Spot</h4>
+				<button class="close" v-on:click="$emit('remove', spot.ID)">&times;</button>
+				<h4 class="m-0">{{ spot.uName }}</h4>
 			</div>
 			<div class="card-body">
-				<h5>Passcode: <strong>123456</strong></h5>
-				<a href="#">Map</a>
+				<h5 v-if="hasCode">Passcode: <em>{{ spot.uCode }}</em></h5>
+				<h5 v-else>Physical key required</h5>
+				<a v-bind:href="spot.uLink">Map</a>
 			</div>
 		</div>
 	</transition>
 </template>
 
 <script>
-	Vue.component("spot-card", {
-		template: CORE.getTemplateHTML()
-	});
+	(function () {
+		"use strict";
+
+		Vue.component("spot-card", {
+			template: CORE.getTemplateHTML(),
+			props: [ "spot" ],
+			computed: { hasCode: function () { return this.spot.uCode.length; } }
+		});
+	} ());
 </script>
