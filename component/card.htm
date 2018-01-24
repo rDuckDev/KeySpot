@@ -1,14 +1,17 @@
 <template id="CardTemplate">
 	<transition enter-active-class="animated fadeIn">
 		<div class="card">
-			<div class="card-header">
-				<button class="close" v-on:click="$emit('remove', spot.ID)">&times;</button>
-				<h4 class="m-0">{{ spot.uName }}</h4>
-			</div>
 			<div class="card-body">
-				<h5 v-if="hasCode">Passcode: <em>{{ spot.uCode }}</em></h5>
-				<h5 v-else>Physical key required</h5>
-				<a v-bind:href="spot.uLink">Map</a>
+				<button class="close" v-on:click="$emit('remove', spot._id)">&times;</button>
+				<h4 class="card-title">{{ spot.uName }}</h4>
+				<h6 class="card-subtitle" v-if="hasCode">
+					<i class="fa fa-lock"></i> Passcode: <em>{{ spot.uCode }}</em>
+				</h6>
+				<h6 class="card-subtitle" v-else>
+					<i class="fa fa-key"></i> Physical key
+				</h6>
+				<p class="card-text"></p>
+				<a class="card-link" v-bind:href="spot.uLink">Map</a>
 			</div>
 		</div>
 	</transition>
