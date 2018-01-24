@@ -1,0 +1,128 @@
+<template id="FormTemplate">
+	<div id="SpotForm" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4 class="modal-title">Add a spot</h4>
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+				</div>
+				<div class="modal-body clearfix">
+					<div class="form-group" v-bind:class="{ 'has-success': isValidName }">
+						<input placeholder="Address or business name" type="text" class="form-control" v-model.trim="spot.uName.value">
+						<small class="form-text text-muted">{{ spot.uLink.value }}</small>
+					</div>
+					<div class="form-group">
+						<input placeholder="Passcode" type="text" class="form-control" v-model.trim="spot.uCode.value">
+						<small class="form-text text-muted">Leave this blank if the key is physical</small>
+					</div>
+					<div class="row">
+						<div class="form-group col-12 col-md-6" v-bind:class="{ 'has-success': isValidLatitude }">
+							<input placeholder="Latitude" type="text" class="form-control" v-model.number="spot.uLatitude.value">
+						</div>
+						<div class="form-group col-12 col-md-6" v-bind:class="{ 'has-success': isValidLongitude }">
+							<input placeholder="Longitude" type="text" class="form-control" v-model.number="spot.uLongitude.value">
+						</div>
+					</div>
+					<div class="form-group">
+						<button class="btn btn-secondary btn-block" v-on:click="updateLocation">
+							<i class="fa fa-circle-o-notch fa-spin" v-if="isFindingLocation"></i>
+							<i class="fa fa-map-marker" v-else></i>
+							Get latitude and longitude
+						</button>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" v-on:click="submit" v-bind:class="{ disabled: !isValidForm }">Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	(function () {
+		"use strict";
+
+		function updateLocation () {
+			if (!"geolocation" in navigator) return;
+
+			var self = this;
+
+			self.isFindingLocation = true;
+
+			navigator.geolocation.getCurrentPosition(function (position) {
+				self.spot.uLatitude.value = position.coords.latitude;
+				self.spot.uLongitude.value = position.coords.longitude;
+
+				self.isFindingLocation = false;
+			});
+		}
+		function submit () {
+			if (!this.isValidForm) return;
+
+			jQuery("#SpotForm").modal("hide");
+
+			var self = this,
+				data = {};
+
+			_.forEach(self.spot, function (obj, key) {
+				// build the new record
+				data[key] = obj.value;
+
+				// reset the form data
+				self.spot[key].value = "";
+				self.spot[key].isValid = false;
+			});
+
+			self.$emit("add", data);
+		}
+		Vue.component("spot-form", {
+			template: CORE.getTemplateHTML("#FormTemplate"),
+			data: function () {
+				return {
+					spot: {
+						uName: { value: "", isValid: false },
+						uLatitude: { value: "", isValid: false },
+						uLongitude: { value: "", isValid: false },
+						uLink: { value: "", isValid: false }, // computed
+						uCode: { value: "", isValid: false }
+					},
+					isFindingLocation: false
+				};
+			},
+			computed: {
+				isValidName: function () {
+					var isValid = !!this.spot.uName.value.length;
+
+					this.spot.uLink.value = "https://maps.google.com?q=" + this.spot.uName.value;
+
+					return this.spot.uName.isValid = this.spot.uLink.isValid = isValid;
+				},
+				isValidLatitude: function () {
+					return this.spot.uLatitude.isValid = (
+						typeof this.spot.uLatitude.value === "number" &&
+						this.spot.uLatitude.value > 0
+					)
+				},
+				isValidLongitude: function () {
+					return this.spot.uLongitude.isValid = (
+						typeof this.spot.uLongitude.value === "number" &&
+							this.spot.uLongitude.value !== 0
+					)
+				},
+				isValidForm: function () {
+					// passcode is always valid
+					this.spot.uCode.isValid = true;
+
+					return this.isValidName &&
+						this.isValidLatitude &&
+						this.isValidLongitude;
+				}
+			},
+			methods: {
+				updateLocation: updateLocation,
+				submit: submit
+			}
+		});
+	} ());
+</script>
