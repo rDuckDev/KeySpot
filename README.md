@@ -4,6 +4,7 @@ Save passcode combinations for digital locks to your local device
 
 ## Wish list
 
+* Theme by device
 * Sort by
 	* ID (entry date)
 	* Name
