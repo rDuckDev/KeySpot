@@ -22,14 +22,29 @@
 
 	<main id="KeySpotApp" class="container">
 		<spot-form v-on:add="add"></spot-form>
+		<div class="card mt-4">
 			<div class="card-header">
 				<h3 class="m-0">
-					<button class="close">&plus;</button>
+					<button class="close" data-toggle="modal" data-target="#SpotForm">&plus;</button>
 					My spots
 				</h3>
 			</div>
 			<div class="card-body">
-				<spot-card></spot-card>
+				<div class="row">
+					<div class="col" v-if="!spots.length">
+						<div class="alert alert-warning">
+							<span class="mr-2">Add a spot to begin.</span>
+							<button class="btn btn-warning" data-toggle="modal" data-target="#SpotForm">&plus;</button>
+						</div>
+					</div>
+					<div class="col-12 col-md-6 col-lg-4 mb-4" v-for="spot in spots">
+						<spot-card
+							v-bind:spot="spot"
+							v-bind:key="spot._id"
+							v-on:remove="remove">
+						</spot-card>
+					</div>
+				</div>
 			</div>
 		</div>
 	</main>
@@ -54,9 +69,54 @@
 			Components.push("./component/form.htm");
 			Components.push("./component/card.htm");
 
+			var spotDB = new PouchDB("SpotDB");
+
+			function loadData () {
+				var self = this;
+
+				spotDB.allDocs({ include_docs: true })
+					.then(function (results) {
+						_.forEach(results.rows, function (row) {
+							var rec = _.cloneDeep(row.doc);
+
+							delete rec._rev;
+
+							self.spots.push(rec);
+						});
+					});
+			}
+			function add (spot) {
+				var rec = {
+					_id: new Date().getTime().toString(),
+					uName: spot.uName,
+					uLatitude: spot.uLatitude,
+					uLongitude: spot.uLongitude,
+					uLink: spot.uLink,
+					uCode: spot.uCode
+				};
+
+				spotDB.put(rec);
+				this.spots.push(rec);
+			}
+			function remove (id) {
+				var index = _.findIndex(this.spots, [ "_id", id ]);
+
+				spotDB.get(this.spots[index]._id)
+					.then(function (rec) {
+						return spotDB.remove(rec);
+					});
+				this.spots.splice(index, 1);
+			}
 			function buildApp () {
 				new Vue({
-					el: "#KeySpotApp"
+					el: "#KeySpotApp",
+					data: { spots: [] },
+					methods: {
+						add: add,
+						remove: remove,
+						loadData: loadData
+					},
+					beforeMount: function () { this.loadData() }
 				});
 			}
 
