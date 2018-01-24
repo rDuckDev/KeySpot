@@ -1,3 +1,19 @@
 # KeySpot
 
-* Enter locations and their publicly accessible door lock combinations using localStorage
+Save passcode combinations for digital locks to your local device
+
+## Wish list
+
+* Sort by
+	* ID (entry date)
+	* Name
+	* Distance
+	* Passcode
+* Show / hide by
+	* Has passcode
+* Favorites
+* Update record
+
+## License
+
+KeySpot is copyright © 2018+ Jonathan Hermsen and released under the MIT license.
