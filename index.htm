@@ -25,7 +25,7 @@
 		<div class="card mt-4">
 			<div class="card-header">
 				<h3 class="m-0">
-					<button class="close" data-toggle="modal" data-target="#SpotForm">&plus;</button>
+					<button type="button" class="close" data-toggle="modal" data-target="#SpotForm">&plus;</button>
 					<div class="dropdown">
 						<button type="button" class="close pull-left mt-1 mr-2" type="button" id="SortMenu" data-toggle="dropdown">
 							<small>
@@ -57,7 +57,7 @@
 					<div class="col" v-if="!spots.length">
 						<div class="alert alert-warning">
 							<span class="mr-2">Add a spot to begin.</span>
-							<button class="btn btn-warning" data-toggle="modal" data-target="#SpotForm">&plus;</button>
+							<button type="button" class="btn btn-warning" data-toggle="modal" data-target="#SpotForm">&plus;</button>
 						</div>
 					</div>
 					<div class="col-12 col-md-6 col-lg-4 mb-4" v-for="spot in spots">
