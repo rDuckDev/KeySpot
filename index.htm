@@ -26,6 +26,29 @@
 			<div class="card-header">
 				<h3 class="m-0">
 					<button class="close" data-toggle="modal" data-target="#SpotForm">&plus;</button>
+					<div class="dropdown">
+						<button type="button" class="close pull-left mt-1 mr-2" type="button" id="SortMenu" data-toggle="dropdown">
+							<small>
+								<i class="fa fa-sort fa-fw" v-if="!isSorting"></i>
+								<i class="fa fa-sort fa-spin fa-fw" v-else></i>
+							</small>
+						</button>
+						<div class="dropdown-menu" aria-labelledby="SortMenu">
+							<button type="button" class="dropdown-item" v-on:click="sortDefault">
+								<i class="fa fa-sort-amount-asc fa-fw"></i> Default
+							</button>
+							<button type="button" class="dropdown-item" v-on:click="sortName">
+								<i class="fa fa-sort-alpha-asc fa-fw"></i> Name
+							</button>
+							<button type="button" class="dropdown-item" v-on:click="sortPasscode">
+								<i class="fa fa-sort-numeric-asc fa-fw"></i> Passcode
+							</button>
+							<button type="button" class="dropdown-item" v-on:click="sortDistance">
+								<i class="fa fa-location-arrow fa-fw"></i> Distance
+							</button>
+						</div>
+						
+					</div>
 					My spots
 				</h3>
 			</div>
@@ -71,6 +94,62 @@
 
 			var spotDB = new PouchDB("SpotDB");
 
+			function deg2rad (deg) {
+				return deg * (Math.PI/180);
+			}
+			function getDistance (lat1, lon1, lat2, lon2) {
+				// https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula
+				var R = 6371; // Radius of the earth in km
+				var dLat = deg2rad(lat2-lat1); // deg2rad below
+				var dLon = deg2rad(lon2-lon1);
+				var a =  Math.sin(dLat/2) * Math.sin(dLat/2) +
+					Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+					Math.sin(dLon/2) * Math.sin(dLon/2);
+				var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+				var d = R * c; // Distance in km
+				return d;
+			}
+			function sortDefault () {
+				this. isSorting = true;
+
+				this.spots = _.sortBy(this.spots, [ "_id" ]);
+
+				this.isSorting = false;
+			}
+			function sortName () {
+				this.isSorting = true;
+
+				this.spots = _.sortBy(this.spots, [ "uName" ]);
+
+				this.isSorting = false;
+			}
+			function sortDistance () {
+				if (!"geolocation" in navigator) return;
+
+				var self = this;
+
+				self.isSorting = true;
+
+				navigator.geolocation.getCurrentPosition(function (position) {
+					self.spots = _.sortBy(self.spots, [ function (spot) {
+						return getDistance(
+							position.coords.latitude,
+							position.coords.longitude,
+							spot.uLatitude,
+							spot.uLongitude
+						);
+					}, "uName" ]);
+
+					self.isSorting = false;
+				});
+			}
+			function sortPasscode () {
+				this.isSorting = true;
+
+				this.spots = _.sortBy(this.spots, [ "uCode", "uName" ]);
+
+				this.isSorting = false;
+			}
 			function loadData () {
 				var self = this;
 
@@ -110,11 +189,18 @@
 			function buildApp () {
 				new Vue({
 					el: "#KeySpotApp",
-					data: { spots: [] },
+					data: {
+						spots: [],
+						isSorting: false
+					},
 					methods: {
 						add: add,
 						remove: remove,
-						loadData: loadData
+						loadData: loadData,
+						sortDefault: sortDefault,
+						sortName: sortName,
+						sortDistance: sortDistance,
+						sortPasscode: sortPasscode
 					},
 					beforeMount: function () { this.loadData() }
 				});
