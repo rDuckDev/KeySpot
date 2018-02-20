@@ -40,7 +40,7 @@
 							<small v-show="errors.has('uLongitude')" class="form-text text-danger">{{ errors.first("uLongitude") }}</small>
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group" v-show="'geolocation' in navigator">
 						<button class="btn btn-secondary btn-block" v-on:click="updateLocation">
 							<i class="fa fa-circle-o-notch fa-spin" v-if="isFindingLocation"></i>
 							<i class="fa fa-map-marker" v-else></i>
@@ -61,8 +61,6 @@
 		"use strict";
 
 		function updateLocation () {
-			if (!"geolocation" in navigator) return;
-
 			var self = this;
 
 			self.isFindingLocation = true;

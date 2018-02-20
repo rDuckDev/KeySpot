@@ -43,7 +43,7 @@
 							<button type="button" class="dropdown-item" v-on:click="sortPasscode">
 								<i class="fa fa-sort-numeric-asc fa-fw"></i> Passcode
 							</button>
-							<button type="button" class="dropdown-item" v-on:click="sortDistance">
+							<button type="button" class="dropdown-item" v-on:click="sortDistance" v-show="'geolocation' in navigator">
 								<i class="fa fa-location-arrow fa-fw"></i> Distance
 							</button>
 						</div>
@@ -125,8 +125,6 @@
 				this.isSorting = false;
 			}
 			function sortDistance () {
-				if (!"geolocation" in navigator) return;
-
 				var self = this;
 
 				self.isSorting = true;
