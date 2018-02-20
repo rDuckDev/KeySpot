@@ -12,16 +12,15 @@
 							placeholder="Address or business name"
 							data-vv-as="Address or business name"
 							v-validate.initial="'required'"
-							v-model.trim="uName"
-							v-bind:class="inputClass(errors.has('uName'))">
-						<span v-if="errors.has('uName')" class="invalid-feedback">{{ errors.first("uName") }}</span>
+							v-model.trim="uName">
+						<small v-if="errors.has('uName')" class="form-text text-danger">{{ errors.first("uName") }}</small>
 						<small v-else class="form-text text-muted">{{ uLink }}</small>
 					</div>
 					<div class="form-group">
 						<input name="uCode" type="text" class="form-control"
 							placeholder="Passcode"
 							v-model.trim="uCode">
-						<small class="form-text text-muted">Leave Passcode blank if a physical key is used.</small>
+						<small class="form-text text-muted">Leave the Passcode field blank if a physical key is used.</small>
 					</div>
 					<div class="row">
 						<div class="form-group col-12 col-md-6">
@@ -29,18 +28,16 @@
 								placeholder="Latitude"
 								data-vv-as="Latitude"
 								v-validate.initial="'required|decimal|not_in:0'"
-								v-model.number="uLatitude"
-								v-bind:class="inputClass(errors.has('uLatitude'))">
-							<span v-show="errors.has('uLatitude')" class="invalid-feedback">{{ errors.first("uLatitude") }}</span>
+								v-model.number="uLatitude">
+							<small v-show="errors.has('uLatitude')" class="form-text text-danger">{{ errors.first("uLatitude") }}</small>
 						</div>
 						<div class="form-group col-12 col-md-6">
 							<input name="uLongitude" type="text" class="form-control"
 								placeholder="Longitude"
 								data-vv-as="Longitude"
 								v-validate.initial="'required|decimal|not_in:0'"
-								v-model.number="uLongitude"
-								v-bind:class="inputClass(errors.has('uLongitude'))">
-							<span v-show="errors.has('uLongitude')" class="invalid-feedback">{{ errors.first("uLongitude") }}</span>
+								v-model.number="uLongitude">
+							<small v-show="errors.has('uLongitude')" class="form-text text-danger">{{ errors.first("uLongitude") }}</small>
 						</div>
 					</div>
 					<div class="form-group">
@@ -76,9 +73,6 @@
 
 				self.isFindingLocation = false;
 			});
-		}
-		function inputClass (hasError) {
-			return { "is-invalid": hasError };
 		}
 		function submit () {
 			var self = this;
@@ -126,7 +120,6 @@
 			},
 			methods: {
 				updateLocation: updateLocation,
-				inputClass: inputClass,
 				submit: submit
 			}
 		});
